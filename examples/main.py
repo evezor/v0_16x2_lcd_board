@@ -7,8 +7,8 @@ import utime
 print("16x2 Display v1.0p test code")
 print("v1.0")
 print("initializing")
-can = CAN(1, CAN.NORMAL)
-can.setfilter(0, CAN.LIST16, 0, (123, 124, 125, 126))
+can = CAN(1, CAN.NORMAL, extframe=True, prescaler=12, bs1=11, bs2=2)
+can.setfilter(0, CAN.MASK32, 0, (0, 0))
 
 #Setup Pins
 hbt_led = Pin("D13", Pin.OUT)
@@ -73,7 +73,7 @@ def test_main():
     print("Running test_main")
     lcd.clear()
     lcd.putstr("Message\nReceived")
-    utime.sleep_ms(100)
+    utime.sleep_ms(500)
     lcd.clear()
     
    
