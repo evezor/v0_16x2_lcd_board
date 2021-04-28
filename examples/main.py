@@ -73,7 +73,7 @@ def test_main():
     print("Running test_main")
     lcd.clear()
     lcd.putstr("Message\nReceived")
-    utime.sleep_ms(500)
+    utime.sleep_ms(20)
     lcd.clear()
     
    
