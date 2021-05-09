@@ -23,7 +23,7 @@ start = utime.ticks_ms()
 next_hbt = utime.ticks_add(start, hbt_interval)
 hbt_led.value(hbt_state)
 
-
+lcd_mess = ''
 print("starting")
 
 #Setup LCD
@@ -58,15 +58,18 @@ def send():
     can.send('16x2TEST', 123)   # send a message with id 123
     
 def get():
+    global lcd_mess
     mess = can.recv(0)
-    print(mess)
-    print(mess[3])
-    test_main()  
-    lcd.clear()
-    string = "arb ID: " + str(mess[0]) + "\nMsg: " + str(mess[3])
-    lcd.putstr(string)
-    utime.sleep(3)
-    lcd.clear()
+    device = "{0:b}".format(mess[0])
+    if len(device) < 29: # add in leading zeros
+        zeros = ''
+        for i in range(29 - len(device)):
+            zeros = '0' + zeros
+        device = zeros + device
+    channel = int(device[0:4], 2)
+    dev = int(device[4:11], 2)
+    lcd_mess = ' c:'+ str(channel) +' d:' + str(dev) + "\nMsg: " + str(mess[3])
+    print(lcd_mess)
   
         
 def test_main():
@@ -78,9 +81,10 @@ def test_main():
     
    
 while True:
-    lcd.move_to(0, 0)
-    lcd.putstr("%7d" % (millis() // 1000))
-    delay(100)
+    time = "%7d" % (millis() // 1000) + lcd_mess
+    lcd.clear()
+    lcd.putstr(time)
+    delay(10)
     
     chk_hbt()
     if not (func_butt.value()):
